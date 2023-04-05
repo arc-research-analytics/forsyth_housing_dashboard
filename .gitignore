@@ -1,0 +1,9 @@
+Data/
+
+*.ipynb_checkpoints
+
+Geocoded_Final.csv
+
+Geocoded_Final_Joined.csv
+
+__pychache__
