@@ -945,7 +945,10 @@ def line_chart():
 
     # add interactive vertical lines
     fig.add_vline(x=quarters_filter_dict[quarters[0]], line_width=2, line_dash="dash", line_color="#FF8966")
-    fig.add_vline(x=quarters_filter_dict[quarters[1]] + pd.DateOffset(months=3), line_width=2, line_dash="dash", line_color="#FF8966")
+    if quarters[1] == 'Q4-22':
+        fig.add_vline(x=date(2022,12,31), line_width=2, line_dash="dash", line_color="#FF8966")
+    else:
+        fig.add_vline(x=quarters_filter_dict[quarters[1]] + pd.DateOffset(months=3), line_width=2, line_dash="dash", line_color="#FF8966")
 
     return fig
 
