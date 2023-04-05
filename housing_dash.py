@@ -1025,5 +1025,8 @@ with col1:
     expander = st.expander("Disclaimers")
     expander.markdown("<span style='color:#022B3A'> Excludes non-qualified, non-market, and bulk transactions. Excludes transactions below $1,000 and homes smaller than 75 square feet. Data downloaded from Forsyth County public records on March 7, 2023.</span>", unsafe_allow_html=True)
 image = Image.open('content/logo.png')
+col6.write("")
+col6.write("")
+col6.write("")
 col6.write("Powered by:")
 col6.image(image, width=80)
