@@ -298,7 +298,7 @@ def map_cumulative_2D():
 
     # set choropleth color
     # color_brewer_colors = cm.get_palette('Blues', 5)
-    colors_rgb = [hex_to_rgb(c) for c in custom_colors_light]
+    colors_rgb = [hex_to_rgb(c) for c in custom_colors_dark]
     colors_rgb = list(colors_rgb)
 
     # ignore the first value, which is essentially white
@@ -408,7 +408,7 @@ def map_cumulative_3D():
 
     # set choropleth color
     colors = cm.get_palette('Blues', 5)
-    colors_rgb = [hex_to_rgb(c) for c in custom_colors_light]
+    colors_rgb = [hex_to_rgb(c) for c in custom_colors_dark]
     colors_rgb = list(colors_rgb)
 
     # ignore the first value, which is essentially white
