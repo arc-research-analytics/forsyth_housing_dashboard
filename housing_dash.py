@@ -376,7 +376,7 @@ def map_cumulative_2D():
             'mapbox':'pk.eyJ1Ijoid3dyaWdodDIxIiwiYSI6ImNsZzU3MjB2YjAwNjIzcm5zMDdtYXJkNXUifQ.FxUvOC7AOzbaCbNQlYONLg'
             },
         map_provider='mapbox',
-        map_style='road',
+        map_style='light',
         tooltip=tooltip)
 
     return r
@@ -489,7 +489,7 @@ def map_cumulative_3D():
             'mapbox':'pk.eyJ1Ijoid3dyaWdodDIxIiwiYSI6ImNsZzU3MjB2YjAwNjIzcm5zMDdtYXJkNXUifQ.FxUvOC7AOzbaCbNQlYONLg'
             },
         map_provider='mapbox',
-        map_style='road',
+        map_style='light',
         tooltip=tooltip)
 
     return r
