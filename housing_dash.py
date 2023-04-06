@@ -22,6 +22,7 @@ st.set_page_config(
     # initial_sidebar_state="collapsed"
     )
 
+# the custom css lives here:
 hide_default_format = """
         <style>
             .reportview-container .main footer {visibility: hidden;}    
@@ -42,20 +43,21 @@ hide_default_format = """
                 }
             [data-testid="stMetricValue"] {
                 color: #FF8966;
-                font-size: 35px;
-                font-weight:700;
+                font-size: 30px;
+                font-weight:400;
                 text-align: center;
                 }
             [data-testid="stMetricLabel"] {
                 color: #022B3A;
-                text-align: center;
-                # text-decoration: underline;
+                font-weight: 900;
                 }
         </style>
        """
 
 st.markdown(hide_default_format, unsafe_allow_html=True)
 
+custom_colors_light = ['#ffffff','#ffd8ca','#ffbea8','#ffa487','#FF8966']
+custom_colors_dark = ['#ffffff','#a7b2b8','#70828c','#3c5461','#022b3a']
 # custo-myze ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 # sidebar variables vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
@@ -181,16 +183,10 @@ if geography_included == 'Sub-geography':
 # sidebar variables ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 # Create dashboard title
-if variable == 'Price Change Over Time':
-    if quarters[0] != quarters[1]:
-        st.markdown(f"<h2><span style='color:#022B3A'>Forsyth County Housing Trends:</span> <span style='color:#FF8966'> {quarters_title_dict[quarters[0]]} to {quarters_title_dict[quarters[1]]}</span></h2>", unsafe_allow_html=True)
-    else:
-        st.info('Error! Please select separate start and end years.')
+if quarters[0] != quarters[1]:
+    st.markdown(f"<h2><span style='color:#022B3A'>Forsyth County Housing Trends</span><span style='color:#022B3A'> | </span><span style='color:#FF8966'> {quarters_title_dict[quarters[0]]} - {quarters_title_dict[quarters[1]]}</span></h2>", unsafe_allow_html=True)
 else:
-    if quarters[0] != quarters[1]:
-        st.markdown(f"<h2><span style='color:#022B3A'>Forsyth County Housing Trends:</span> <span style='color:#FF8966'> {quarters_title_dict[quarters[0]]} - {quarters_title_dict[quarters[1]]}</span></h2>", unsafe_allow_html=True)
-    else:
-        st.markdown(f"<h2><span style='color:#022B3A'>Forsyth County Housing Trends:</span> <span style='color:#FF8966'> {quarters_title_dict[quarters[0]]} only</span></h2>", unsafe_allow_html=True)
+    st.markdown(f"<h2><span style='color:#022B3A'>Forsyth County Housing Trends</span><span style='color:#022B3A'> | </span><span style='color:#FF8966'> {quarters_title_dict[quarters[0]]} only</span></h2>", unsafe_allow_html=True)
             
 # function to load, join, & filter tabular & geospatial data
 @st.cache_data
@@ -302,8 +298,7 @@ def map_cumulative_2D():
 
     # set choropleth color
     # color_brewer_colors = cm.get_palette('Blues', 5)
-    custom_colors = ['#ffffff','#ffe5db','#ffcbb9','#ffb197','#ff8966']
-    colors_rgb = [hex_to_rgb(c) for c in custom_colors]
+    colors_rgb = [hex_to_rgb(c) for c in custom_colors_light]
     colors_rgb = list(colors_rgb)
 
     # ignore the first value, which is essentially white
@@ -314,7 +309,6 @@ def map_cumulative_2D():
         'Sales Price per SF':df_map['price_sf'],
         'Sales Volume':df_map['unique_ID'] 
         }
-
 
     # set choropleth column 
     try:
@@ -414,7 +408,7 @@ def map_cumulative_3D():
 
     # set choropleth color
     colors = cm.get_palette('Blues', 5)
-    colors_rgb = [hex_to_rgb(c) for c in colors]
+    colors_rgb = [hex_to_rgb(c) for c in custom_colors_light]
     colors_rgb = list(colors_rgb)
 
     # ignore the first value, which is essentially white
@@ -889,10 +883,9 @@ def line_chart():
     }
 
     var_dict_title = {
-        'Sales Price':'Median Sales Price per Month',
-        'Sales Price per SF':'Median Sales Price / SF per Month',
-        'Sales Volume':'Number of Sales per Month',
-        'Price Change Over Time':'Median Sales Price per Month'
+        'Sales Price':'<span style="font-size: 20px;">Median Sales Price per Month</span> <br> <span style="font-size: 14px;">Orange vertical lines show selected quarters</span>',
+        'Sales Price per SF':'<span style="font-size: 20px;">Median Sales Price / SF per Month</span> <br> <span style="font-size: 14px;">Orange vertical lines show selected quarters</span>',
+        'Sales Volume':'<span style="font-size: 20px;">Number of Sales per Month</span> <br> <span style="font-size: 14px;">Orange vertical lines show selected quarters</span>',
     }
 
     format_dict = {
@@ -926,12 +919,13 @@ def line_chart():
             title_font_color="#022B3A",
             yaxis = dict(
                 title = None,
-                showticklabels  = True,
+                tickfont_color = '#022B3A',
                 showgrid = False
                 ),
             xaxis = dict(
                 linecolor = "#FFFFFF",
                 linewidth = 1,
+                tickfont_color = '#022B3A',
                 title = None,
                 tickformat = '%b %Y',
                 dtick = 'M3'
@@ -947,11 +941,13 @@ def line_chart():
             yaxis = dict(
                 title = None,
                 tickformat = format_dict[variable],
+                tickfont_color = '#022B3A',
                 showgrid = False
                 ),
             xaxis = dict(
                 linecolor = "#FFFFFF",
                 linewidth = 1,
+                tickfont_color = '#022B3A',
                 title = None,
                 tickformat = '%b %Y',
                 dtick = 'M3'
@@ -959,7 +955,7 @@ def line_chart():
             height=515,
             hovermode="x unified")
 
-    # add interactive vertical lines
+    # add shifting vertical lines
     fig.add_vline(x=quarters_filter_dict[quarters[0]], line_width=2, line_dash="dash", line_color="#FF8966")
     if quarters[1] == 'Q4-22':
         fig.add_vline(x=date(2022,12,1), line_width=2, line_dash="dash", line_color="#FF8966")
