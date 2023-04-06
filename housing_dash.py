@@ -658,7 +658,16 @@ def kpi_total_sales():
     return total_sales
 
 def kpi_Q1_total():
-    joined_df = load_data()
+    df = pd.read_csv('Geocoded_Final_Joined.csv', thousands=',')
+    df.rename(columns={
+        'Year  Built':'year_blt',
+        'Year':'year_sale'
+    }, inplace=True)
+    df['GEOID'] = df['GEOID'].astype(str)
+    df['unique_ID'] = df['Address'] + '-' + df['Sale Date'].astype(str) + '-' + df['price_number'].astype(str)
+    df = df[['Address', 'Square Ft', 'year_blt', 'Sale Date', 'year_sale', 'price_number','price_sf','GEOID','Sub_geo','unique_ID']]
+    df['Sale Date'] = pd.to_datetime(df['Sale Date']).dt.date
+    joined_df = df
 
     # grab first and last quarters from the range slider
     q1_a = quarters_filter_dict[quarters[0]]
@@ -705,7 +714,16 @@ def kpi_Q1_total():
     return df1_median_label
 
 def kpi_Q2_total():
-    joined_df = load_data()
+    df = pd.read_csv('Geocoded_Final_Joined.csv', thousands=',')
+    df.rename(columns={
+        'Year  Built':'year_blt',
+        'Year':'year_sale'
+    }, inplace=True)
+    df['GEOID'] = df['GEOID'].astype(str)
+    df['unique_ID'] = df['Address'] + '-' + df['Sale Date'].astype(str) + '-' + df['price_number'].astype(str)
+    df = df[['Address', 'Square Ft', 'year_blt', 'Sale Date', 'year_sale', 'price_number','price_sf','GEOID','Sub_geo','unique_ID']]
+    df['Sale Date'] = pd.to_datetime(df['Sale Date']).dt.date
+    joined_df = df
 
     q2_a = quarters_filter_dict[quarters[1]]
     q2_b = q2_a + pd.DateOffset(months=3)
@@ -750,7 +768,16 @@ def kpi_Q2_total():
     return df2_median_label
 
 def kpi_delta():
-    joined_df = load_data()
+    df = pd.read_csv('Geocoded_Final_Joined.csv', thousands=',')
+    df.rename(columns={
+        'Year  Built':'year_blt',
+        'Year':'year_sale'
+    }, inplace=True)
+    df['GEOID'] = df['GEOID'].astype(str)
+    df['unique_ID'] = df['Address'] + '-' + df['Sale Date'].astype(str) + '-' + df['price_number'].astype(str)
+    df = df[['Address', 'Square Ft', 'year_blt', 'Sale Date', 'year_sale', 'price_number','price_sf','GEOID','Sub_geo','unique_ID']]
+    df['Sale Date'] = pd.to_datetime(df['Sale Date']).dt.date
+    joined_df = df
 
     # grab first and last quarters from the range slider
     q1_a = quarters_filter_dict[quarters[0]]
@@ -822,8 +849,16 @@ def kpi_delta():
 
 def line_chart():
     # go read the dataaaaa
-    joined_df = load_data()
-    joined_df = joined_df[['Sale Date', 'Square Ft', 'year_blt', 'Sub_geo', 'price_number', 'price_sf', 'unique_ID']]
+    df = pd.read_csv('Geocoded_Final_Joined.csv', thousands=',')
+    df.rename(columns={
+        'Year  Built':'year_blt',
+        'Year':'year_sale'
+    }, inplace=True)
+    df['GEOID'] = df['GEOID'].astype(str)
+    df['unique_ID'] = df['Address'] + '-' + df['Sale Date'].astype(str) + '-' + df['price_number'].astype(str)
+    df = df[['Address', 'Square Ft', 'year_blt', 'Sale Date', 'year_sale', 'price_number','price_sf','GEOID','Sub_geo','unique_ID']]
+    df['Sale Date'] = pd.to_datetime(df['Sale Date']).dt.date
+    joined_df = df
 
     # filter
     if ((vintage[0] == 'Pre-2000') & (vintage[1] == 'Pre-2000')):
