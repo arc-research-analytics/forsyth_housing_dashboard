@@ -920,6 +920,7 @@ def line_chart():
             yaxis = dict(
                 title = None,
                 tickfont_color = '#022B3A',
+                tickfont_size = 14,
                 showgrid = False
                 ),
             xaxis = dict(
@@ -930,7 +931,7 @@ def line_chart():
                 tickformat = '%b %Y',
                 dtick = 'M3'
                 ),
-            height=490,
+            height=530,
             hovermode="x unified")
     else:
         fig.update_layout(
@@ -942,6 +943,7 @@ def line_chart():
                 title = None,
                 tickformat = format_dict[variable],
                 tickfont_color = '#022B3A',
+                tickfont_size = 14,
                 showgrid = False
                 ),
             xaxis = dict(
@@ -952,7 +954,7 @@ def line_chart():
                 tickformat = '%b %Y',
                 dtick = 'M3'
                 ),
-            height=515,
+            height=530,
             hovermode="x unified")
 
     # add shifting vertical lines
