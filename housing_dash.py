@@ -60,9 +60,12 @@ st.markdown(hide_default_format, unsafe_allow_html=True)
 
 # sidebar variables vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 variable = st.sidebar.radio(
-    'Dashboard variable:',
-    ('Sales Price', 'Sales Price per SF', 'Sales Volume', 'Price Change Over Time')
-    )
+    'Dashboard variable:',(
+    'Sales Price', 
+    'Sales Price per SF', 
+    'Sales Volume', 
+    # 'Price Change Over Time'
+    ))
 
 # all the quarters available for selection
 quarters = st.sidebar.select_slider(
@@ -369,7 +372,11 @@ def map_cumulative_2D():
     r = pdk.Deck(
         layers=geojson,
         initial_view_state=initial_view_state,
-        map_style="light",
+        api_keys = {
+            'mapbox':'pk.eyJ1Ijoid3dyaWdodDIxIiwiYSI6ImNsZzU3MjB2YjAwNjIzcm5zMDdtYXJkNXUifQ.FxUvOC7AOzbaCbNQlYONLg'
+            },
+        map_provider='mapbox',
+        map_style='road',
         tooltip=tooltip)
 
     return r
@@ -478,12 +485,16 @@ def map_cumulative_3D():
     r = pdk.Deck(
         layers=geojson,
         initial_view_state=initial_view_state,
-        map_style="light",
+        api_keys = {
+            'mapbox':'pk.eyJ1Ijoid3dyaWdodDIxIiwiYSI6ImNsZzU3MjB2YjAwNjIzcm5zMDdtYXJkNXUifQ.FxUvOC7AOzbaCbNQlYONLg'
+            },
+        map_provider='mapbox',
+        map_style='road',
         tooltip=tooltip)
 
     return r
 
-def map_delta():
+# def map_delta():
     joined_df = load_data()
 
     # grab first and last quarters from the range slider
@@ -910,14 +921,14 @@ def line_chart():
             title_font_color="#022B3A",
             yaxis = dict(
                 title = None,
-                showticklabels  = False,
+                showticklabels  = True,
                 showgrid = False
                 ),
             xaxis = dict(
                 linecolor = "#FFFFFF",
                 linewidth = 1,
                 title = None,
-                tickformat = '%B %Y',
+                tickformat = '%b %Y',
                 dtick = 'M3'
                 ),
             height=490,
@@ -937,7 +948,7 @@ def line_chart():
                 linecolor = "#FFFFFF",
                 linewidth = 1,
                 title = None,
-                tickformat = '%B %Y',
+                tickformat = '%b %Y',
                 dtick = 'M3'
                 ),
             height=490,
@@ -964,22 +975,18 @@ except ValueError as e:
     if str(e).startswith('cannot convert float NaN to integer'):
         st.error('')
 
-# line chart testing center---------
-chart_data = pd.DataFrame(
-    np.random.randn(20, 3),
-    columns=['a', 'b', 'c'])
 
 try:
     if variable == 'Price Change Over Time':
         col1, col2, col3 = st.columns([2,0.2,2])
-        col1.pydeck_chart(map_delta(), use_container_width=True)
-        col1.markdown("Note: Darker shades of Census tracts represent greater sales volume for the time period selected. Only Census tracts with sales in each quarter selected will show a value on the map. Percent change as calculated subject to rounding error.")
-        with col3:
-                subcol1, subcol2, subcol3 = st.columns([1, 1, 1])
-                subcol1.metric(f"{quarters_title_dict[quarters[0]]} Median Price:", f"${kpi_Q1_median()}")
-                subcol2.metric(f"{quarters_title_dict[quarters[1]]} Median Price:", f"${kpi_Q2_median()}")
-                subcol3.metric("Percent Change:", f"{kpi_delta()}%")
-        col3.plotly_chart(line_chart(), use_container_width=True, config = {'displayModeBar': False})
+        # col1.pydeck_chart(map_delta(), use_container_width=True)
+        # col1.markdown("Note: Darker shades of Census tracts represent greater sales volume for the time period selected. Only Census tracts with sales in each quarter selected will show a value on the map. Percent change as calculated subject to rounding error.")
+        # with col3:
+        #         subcol1, subcol2, subcol3 = st.columns([1, 1, 1])
+        #         subcol1.metric(f"{quarters_title_dict[quarters[0]]} Median Price:", f"${kpi_Q1_median()}")
+        #         subcol2.metric(f"{quarters_title_dict[quarters[1]]} Median Price:", f"${kpi_Q2_median()}")
+        #         subcol3.metric("Percent Change:", f"{kpi_delta()}%")
+        # col3.plotly_chart(line_chart(), use_container_width=True, config = {'displayModeBar': False})
     else:
         if variable == 'Sales Volume': #this if / then statement will remove the '3D' option on the radio select if we want to see Total Sales
             col1, col2, col3 = st.columns([2,0.2,2])
