@@ -36,20 +36,20 @@ hide_default_format = """
                 }
             div.css-1r6slb0.e1tzin5v2{
                 border: 1px solid; 
-                border-radius: 10px;
+                border-radius: 5px;
                 color: #022B3A;
                 padding: 10px 5px 10px 5px;
-                text-align: center;
                 }
             [data-testid="stMetricValue"] {
                 color: #FF8966;
                 font-size: 30px;
-                font-weight:400;
+                font-weight:500;
                 text-align: center;
                 }
             [data-testid="stMetricLabel"] {
                 color: #022B3A;
-                font-weight: 900;
+                font-weight:900;
+                text-align: center;
                 }
         </style>
        """
@@ -657,7 +657,7 @@ def kpi_total_sales():
     total_sales = prettify(filtered_df['unique_ID'].count())
     return total_sales
 
-def kpi_Q1_median():
+def kpi_Q1_total():
     joined_df = load_data()
 
     # grab first and last quarters from the range slider
@@ -700,11 +700,11 @@ def kpi_Q1_median():
         df1 = df1[df1['Sub_geo'].isin(sub_geo)]
 
     # calculate median sales price of the 2 quarters before running the groupby
-    df1_median_label = millify(df1['price_number'].median(), precision=0)
+    df1_median_label = millify(df1['unique_ID'].count(), precision=0)
 
     return df1_median_label
 
-def kpi_Q2_median():
+def kpi_Q2_total():
     joined_df = load_data()
 
     q2_a = quarters_filter_dict[quarters[1]]
@@ -745,7 +745,7 @@ def kpi_Q2_median():
         df2 = df2[df2['Sub_geo'].isin(sub_geo)]
 
     # calculate median sales price of the 2 quarters before running the groupby
-    df2_median_label = millify(df2['price_number'].median(), precision=0)
+    df2_median_label = millify(df2['unique_ID'].count(), precision=0)
 
     return df2_median_label
 
@@ -883,9 +883,9 @@ def line_chart():
     }
 
     var_dict_title = {
-        'Sales Price':'<span style="font-size: 20px;">Median Sales Price per Month</span> <br> <span style="font-size: 14px;">Orange vertical lines show selected quarters</span>',
-        'Sales Price per SF':'<span style="font-size: 20px;">Median Sales Price / SF per Month</span> <br> <span style="font-size: 14px;">Orange vertical lines show selected quarters</span>',
-        'Sales Volume':'<span style="font-size: 20px;">Number of Sales per Month</span> <br> <span style="font-size: 14px;">Orange vertical lines show selected quarters</span>',
+        'Sales Price':'<span style="font-size: 20px;">Median Sales Price per Month</span> <br> <span style="font-size: 14px;">Orange vertical lines show range of selected quarters</span>',
+        'Sales Price per SF':'<span style="font-size: 20px;">Median Sales Price / SF per Month</span> <br> <span style="font-size: 14px;">Orange vertical lines show range of selected quarters</span>',
+        'Sales Volume':'<span style="font-size: 20px;">Number of Sales per Month</span> <br> <span style="font-size: 14px;">Orange vertical lines show range of selected quarters</span>',
     }
 
     format_dict = {
@@ -998,8 +998,8 @@ try:
             with col3:
                 subcol1, subcol2, subcol3 = st.columns([1, 1, 1])
                 subcol1.metric("Total Home Sales:", kpi_total_sales())
-                subcol2.metric("Median Home Size (SF):", kpi_median_size())
-                subcol3.metric("Median Vintage:", kpi_median_vintage())
+                subcol2.metric(f"Sales in {quarters[0]}:", kpi_Q1_total())
+                subcol3.metric(f"Sales in {quarters[1]}:", kpi_Q2_total())
             col3.plotly_chart(line_chart(), use_container_width=True, config = {'displayModeBar': False})
         else:
             col1, col2, col3 = st.columns([2,0.2,2])
