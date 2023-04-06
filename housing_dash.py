@@ -357,12 +357,12 @@ def map_cumulative_2D():
     if variable == 'Sales Volume':
         tooltip = {
             "html": "Census Tract: <b>{GEOID}</b><br>{tooltip_label}<b>{tooltip_value}</b>",
-            "style": {"background": "#022B3A", "color": "white", "font-family": "Helvetica"},
+            "style": {"background": "rgba(2,43,58,0.7)", "color": "white", "font-family": "Helvetica"},
             }
     else:
         tooltip = {
             "html": "Census Tract: <b>{GEOID}</b><br>{tooltip_label}<b>{tooltip_value}</b><br>Total Sales: <b>{unique_ID_formatted}</b>",
-            "style": {"background": "#022B3A", "color": "white", "font-family": "Helvetica"},
+            "style": {"background": "rgba(2,43,58,0.7)", "color": "white", "font-family": "Helvetica"},
             }
 
     r = pdk.Deck(
@@ -469,12 +469,12 @@ def map_cumulative_3D():
     if variable == 'Sales Volume':
         tooltip = {
             "html": "Census Tract: <b>{GEOID}</b><br>{tooltip_label}<b>{tooltip_value}</b>",
-            "style": {"background": "#022B3A", "color": "white", "font-family": "Helvetica"},
+            "style": {"background": "rgba(2,43,58,0.7)", "color": "white", "font-family": "Helvetica"},
             }
     else:
         tooltip = {
             "html": "Census Tract: <b>{GEOID}</b><br>{tooltip_label}<b>{tooltip_value}</b><br>Total Sales: <b>{unique_ID_formatted}</b>",
-            "style": {"background": "#022B3A", "color": "white", "font-family": "Helvetica"},
+            "style": {"background": "rgba(2,43,58,0.7)", "color": "white", "font-family": "Helvetica"},
             }
 
     r = pdk.Deck(
