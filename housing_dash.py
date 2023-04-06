@@ -301,8 +301,9 @@ def map_cumulative_2D():
     df_map['tooltip_value'] = tooltip_value[variable]
 
     # set choropleth color
-    colors = cm.get_palette('Blues', 5)
-    colors_rgb = [hex_to_rgb(c) for c in colors]
+    # color_brewer_colors = cm.get_palette('Blues', 5)
+    custom_colors = ['#ffffff','#ffe5db','#ffcbb9','#ffb197','#ff8966']
+    colors_rgb = [hex_to_rgb(c) for c in custom_colors]
     colors_rgb = list(colors_rgb)
 
     # ignore the first value, which is essentially white
@@ -337,11 +338,12 @@ def map_cumulative_2D():
     initial_view_state = pdk.ViewState(
         latitude=34.207054643497315,
         longitude=-84.10535919531371, 
-        zoom=9.7, 
+        zoom=9.9, 
         max_zoom=12, 
         min_zoom=8,
         pitch=0,
-        bearing=0
+        bearing=0,
+        height=590
     )
 
     geojson = pdk.Layer(
@@ -372,12 +374,10 @@ def map_cumulative_2D():
     r = pdk.Deck(
         layers=geojson,
         initial_view_state=initial_view_state,
-        api_keys = {
-            'mapbox':'pk.eyJ1Ijoid3dyaWdodDIxIiwiYSI6ImNsZzU3MjB2YjAwNjIzcm5zMDdtYXJkNXUifQ.FxUvOC7AOzbaCbNQlYONLg'
-            },
         map_provider='mapbox',
         map_style='light',
         tooltip=tooltip)
+
 
     return r
 
@@ -452,7 +452,8 @@ def map_cumulative_3D():
         max_zoom=12, 
         min_zoom=6,
         pitch=45,
-        bearing=0
+        bearing=0,
+        height=590
     )
 
     geojson = pdk.Layer(
@@ -951,7 +952,7 @@ def line_chart():
                 tickformat = '%b %Y',
                 dtick = 'M3'
                 ),
-            height=490,
+            height=515,
             hovermode="x unified")
 
     # add interactive vertical lines
@@ -1032,7 +1033,6 @@ with col1:
     expander = st.expander("Disclaimers")
     expander.markdown("<span style='color:#022B3A'> Excludes non-qualified, non-market, and bulk transactions. Excludes transactions below $1,000 and homes smaller than 75 square feet. Data downloaded from Forsyth County public records on March 7, 2023.</span>", unsafe_allow_html=True)
 image = Image.open('content/logo.png')
-col6.write("")
 col6.write("")
 col6.write("")
 col6.write("Powered by:")
