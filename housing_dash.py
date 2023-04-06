@@ -814,9 +814,13 @@ def kpi_delta():
         df1 = df1[df1['Sub_geo'].isin(sub_geo)]
         df2 = df2[df2['Sub_geo'].isin(sub_geo)]
 
+    var_dict_column2 = {
+        'Sales Price':'price_number',
+        'Sales Price per SF':'price_sf'
+    }
     # calculate median sales price of the 2 quarters before running the groupby
-    df1_median = df1['price_number'].median()
-    df2_median = df2['price_number'].median()
+    df1_median = df1[var_dict_column2[variable]].median()
+    df2_median = df2[var_dict_column2[variable]].median()
     df_median_delta = (df2_median - df1_median) / df1_median
     df_median_label = millify(df_median_delta*100, precision=1)
 
@@ -1016,8 +1020,8 @@ try:
             with col3:
                 subcol1, subcol2, subcol3 = st.columns([1, 1, 1])
                 subcol1.metric(f"Median {variable}:", f"${KPI_dict[variable]}")
-                subcol2.metric("Total Home Sales:", kpi_total_sales())
-                subcol3.metric("Median Vintage:", kpi_median_vintage())
+                subcol2.metric(f"{quarters[0]} to {quarters[1]} Change:", f"{kpi_delta()}%")
+                subcol3.metric("Total Home Sales:", kpi_total_sales())
             col3.plotly_chart(line_chart(), use_container_width=True, config = {'displayModeBar': False})
 except ValueError as e:
     if str(e).startswith('Number of class have to be an integer greater than or equal to 1'):
