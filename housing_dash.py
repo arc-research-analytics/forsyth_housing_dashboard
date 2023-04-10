@@ -885,7 +885,8 @@ def line_chart():
         'price_sf':'median',
         'unique_ID':'count',
         'month':pd.Series.mode,
-        'year':pd.Series.mode
+        'year':pd.Series.mode,
+        'Sub_geo':pd.Series.mode
         }).reset_index()
 
     # sort the data so that it's chronological
@@ -912,13 +913,18 @@ def line_chart():
         'Price Change Over Time':'$~s'
     }
 
+
+
     fig = px.line(
-        df_grouped, 
-        x="year-month", 
-        y=var_dict_column[variable],
-        labels={
-            'year-month':'Time Period',
-            })
+    df_grouped, 
+    x="year-month", 
+    y=var_dict_column[variable],
+    labels={
+        'year-month':'Time Period',
+        }
+        )
+    
+
     
     # modify the line itself
     fig.update_traces(
@@ -997,51 +1003,40 @@ except ValueError as e:
 
 
 try:
-    if variable == 'Price Change Over Time':
+    if variable == 'Sales Volume': #this if / then statement will remove the '3D' option on the radio select if we want to see Total Sales
         col1, col2, col3 = st.columns([2,0.2,2])
-        # col1.pydeck_chart(map_delta(), use_container_width=True)
-        # col1.markdown("Note: Darker shades of Census tracts represent greater sales volume for the time period selected. Only Census tracts with sales in each quarter selected will show a value on the map. Percent change as calculated subject to rounding error.")
-        # with col3:
-        #         subcol1, subcol2, subcol3 = st.columns([1, 1, 1])
-        #         subcol1.metric(f"{quarters_title_dict[quarters[0]]} Median Price:", f"${kpi_Q1_median()}")
-        #         subcol2.metric(f"{quarters_title_dict[quarters[1]]} Median Price:", f"${kpi_Q2_median()}")
-        #         subcol3.metric("Percent Change:", f"{kpi_delta()}%")
-        # col3.plotly_chart(line_chart(), use_container_width=True, config = {'displayModeBar': False})
+        col1.pydeck_chart(map_cumulative_2D(), use_container_width=True)
+        col1.markdown("Note: Darker shades of Census tracts represent greater sales volume for the time period selected.")
+        with col3:
+            subcol1, subcol2, subcol3 = st.columns([1, 1, 1])
+            subcol1.metric("Total Home Sales:", kpi_total_sales())
+            subcol2.metric(f"Sales in {quarters[0]}:", kpi_Q1_total())
+            subcol3.metric(f"Sales in {quarters[1]}:", kpi_Q2_total())
+        col3.plotly_chart(line_chart(), use_container_width=True, config = {'displayModeBar': False})
     else:
-        if variable == 'Sales Volume': #this if / then statement will remove the '3D' option on the radio select if we want to see Total Sales
-            col1, col2, col3 = st.columns([2,0.2,2])
+        col1, col2, col3 = st.columns([2,0.25,2])
+        map_view = col2.radio(
+            'Map view:',
+            ('2D', '3D'),
+            index=0
+            )
+        if map_view == '2D':
             col1.pydeck_chart(map_cumulative_2D(), use_container_width=True)
-            col1.markdown("Note: Darker shades of Census tracts represent greater sales volume for the time period selected.")
-            with col3:
-                subcol1, subcol2, subcol3 = st.columns([1, 1, 1])
-                subcol1.metric("Total Home Sales:", kpi_total_sales())
-                subcol2.metric(f"Sales in {quarters[0]}:", kpi_Q1_total())
-                subcol3.metric(f"Sales in {quarters[1]}:", kpi_Q2_total())
-            col3.plotly_chart(line_chart(), use_container_width=True, config = {'displayModeBar': False})
+            col1.markdown(f"Note: Darker shades of Census tracts represent {var_dict1[variable]} for the time period selected.")
         else:
-            col1, col2, col3 = st.columns([2,0.2,2])
-            map_view = col2.radio(
-                'Map view:',
-                ('2D', '3D'),
-                index=0
-                )
-            if map_view == '2D':
-                col1.pydeck_chart(map_cumulative_2D(), use_container_width=True)
-                col1.markdown(f"Note: Darker shades of Census tracts represent {var_dict1[variable]} for the time period selected.")
-            else:
-                col1.pydeck_chart(map_cumulative_3D(), use_container_width=True)
-                col1.info('Shift + click to change map pitch & angle.')
-                col1.markdown(f"Note: Darker shades of Census tracts represent {var_dict1[variable]}. Greater sales volume represented by 'taller' census tracts.")
-            with col3:
-                subcol1, subcol2, subcol3 = st.columns([1, 1, 1])
-                subcol1.metric(f"Median {variable}:", f"${KPI_dict[variable]}")
-                try:
-                    subcol2.metric(f"{quarters[0]} to {quarters[1]} Change:", f"{kpi_delta()}%")
-                except ValueError as e:
-                    if str(e).startswith('cannot convert float NaN to integer'):
-                        subcol2.metric('Timeline & vintage incompatible', 'null')
-                subcol3.metric("Total Home Sales:", kpi_total_sales())
-            col3.plotly_chart(line_chart(), use_container_width=True, config = {'displayModeBar': False})
+            col1.pydeck_chart(map_cumulative_3D(), use_container_width=True)
+            col1.info('Shift + click to change map pitch & angle.')
+            col1.markdown(f"Note: Darker shades of Census tracts represent {var_dict1[variable]}. Greater sales volume represented by 'taller' census tracts.")
+        with col3:
+            subcol1, subcol2, subcol3 = st.columns([1, 1, 1])
+            subcol1.metric(f"Median {variable}:", f"${KPI_dict[variable]}")
+            try:
+                subcol2.metric(f"{quarters[0]} to {quarters[1]} Change:", f"{kpi_delta()}%")
+            except ValueError as e:
+                if str(e).startswith('cannot convert float NaN to integer'):
+                    subcol2.metric('Timeline & vintage incompatible', 'null')
+            subcol3.metric("Total Home Sales:", kpi_total_sales())
+        col3.plotly_chart(line_chart(), use_container_width=True, config = {'displayModeBar': False})
 except ValueError as e:
     if str(e).startswith('Number of class have to be an integer greater than or equal to 1'):
         col1.error('Insufficient data to run dashboard. Please expand search filters!')
