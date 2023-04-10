@@ -94,7 +94,7 @@ quarters = st.sidebar.select_slider(
     'Q3-22',
     'Q4-22',
     ],
-    value=('Q2-20','Q4-22')
+    value=('Q4-19','Q4-22')
 )
 
 # how will the quarters be labeled in the title
@@ -922,9 +922,7 @@ def line_chart():
         'year-month':'Time Period',
         }
         )
-    
-
-    
+      
     # modify the line itself
     fig.update_traces(
         mode="lines",
@@ -985,6 +983,24 @@ def line_chart():
         fig.add_vline(x=date(2022,12,1), line_width=2, line_dash="dash", line_color="#FF8966")
     else:
         fig.add_vline(x=quarters_filter_dict[quarters[1]] + pd.DateOffset(months=3), line_width=2, line_dash="dash", line_color="#FF8966")
+
+    # add a line for when Covid "began"
+    fig.add_vline(x=date(2020,3,11), line_width=1, line_dash="dot", line_color="#022B3A")
+
+    fig.add_annotation(
+        text = ("WHO Declares COVID-19 Pandemic")
+        , showarrow=False
+        , x = 0.45
+        , y = 0.01
+        , xref='paper'
+        , yref='paper' 
+        , xanchor='left'
+        , yanchor='bottom'
+        # , xshift=-1
+        # , yshift=-5
+        , font=dict(size=12, color="#022B3A")
+        , align="left"
+        ,)
 
     return fig
 
