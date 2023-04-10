@@ -1,5 +1,7 @@
 Data/
 
+.streamlit/secrets.toml
+
 *.ipynb_checkpoints
 
 Geocoded_Final.csv
