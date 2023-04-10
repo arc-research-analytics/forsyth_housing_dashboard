@@ -193,7 +193,7 @@ else:
 def load_data():
 
     # read in tabular data
-    df = pd.read_csv('Geocoded_Final_Joined.csv', thousands=',')
+    df = pd.read_csv('Geocoded_Final_Joined.csv', thousands=',', keep_default_na=False)
     df.rename(columns={
         'Year  Built':'year_blt',
         'Year':'year_sale'
@@ -210,7 +210,7 @@ def load_data():
     joined_df.rename(columns={
         'Sub_geo_x':'Sub_geo',
     }, inplace=True)
-    joined_df['Sale Date'] = pd.to_datetime(joined_df['Sale Date']).dt.date
+    joined_df['Sale Date'] = pd.to_datetime(joined_df['Sale Date'])
     joined_df = joined_df[['GEOID','geometry','Sale Date','year_sale','Square Ft','year_blt','price_number','price_sf','unique_ID','Sub_geo']]
 
     # return this
@@ -220,9 +220,9 @@ def filter_data():
     joined_df = load_data()
 
     # filter by transaction year
-    first_date = quarters_filter_dict[quarters[0]]
-    second_date = first_date + pd.DateOffset(months=3)
-    third_date = quarters_filter_dict[quarters[1]] + pd.DateOffset(months=3)
+    first_date = pd.Timestamp(quarters_filter_dict[quarters[0]])
+    second_date = pd.Timestamp(first_date + pd.DateOffset(months=3))
+    third_date = pd.Timestamp(quarters_filter_dict[quarters[1]] + pd.DateOffset(months=3))
 
     if quarters[0] == quarters[1]:
         # this will check if a single quarter is selected from the slider. If so, we want all sales which occured DURING that quarter only
@@ -670,8 +670,8 @@ def kpi_Q1_total():
     joined_df = df
 
     # grab first and last quarters from the range slider
-    q1_a = quarters_filter_dict[quarters[0]]
-    q1_b = q1_a + pd.DateOffset(months=3)
+    q1_a = pd.Timestamp(quarters_filter_dict[quarters[0]])
+    q1_b = pd.Timestamp(q1_a + pd.DateOffset(months=3))
 
     # create first dataframe using the first selected quarter
     df1 = joined_df[(joined_df['Sale Date'] >= q1_a) & (joined_df['Sale Date'] < (q1_b))]
@@ -725,8 +725,8 @@ def kpi_Q2_total():
     df['Sale Date'] = pd.to_datetime(df['Sale Date']).dt.date
     joined_df = df
 
-    q2_a = quarters_filter_dict[quarters[1]]
-    q2_b = q2_a + pd.DateOffset(months=3)
+    q2_a = pd.Timestamp(quarters_filter_dict[quarters[1]])
+    q2_b = pd.Timestamp(q2_a + pd.DateOffset(months=3))
 
     df2 = joined_df[(joined_df['Sale Date'] >= q2_a) & (joined_df['Sale Date'] < (q2_b))]
 
@@ -771,11 +771,11 @@ def kpi_delta():
     joined_df = load_data()
 
     # grab first and last quarters from the range slider
-    q1_a = quarters_filter_dict[quarters[0]]
-    q1_b = q1_a + pd.DateOffset(months=3)
+    q1_a = pd.Timestamp(quarters_filter_dict[quarters[0]])
+    q1_b = pd.Timestamp(q1_a + pd.DateOffset(months=3))
 
-    q2_a = quarters_filter_dict[quarters[1]]
-    q2_b = q2_a + pd.DateOffset(months=3)
+    q2_a = pd.Timestamp(quarters_filter_dict[quarters[1]])
+    q2_b = pd.Timestamp(q2_a + pd.DateOffset(months=3))
 
     # create first dataframe using the first selected quarter
     df1 = joined_df[(joined_df['Sale Date'] >= q1_a) & (joined_df['Sale Date'] < (q1_b))]
@@ -1035,7 +1035,11 @@ try:
             with col3:
                 subcol1, subcol2, subcol3 = st.columns([1, 1, 1])
                 subcol1.metric(f"Median {variable}:", f"${KPI_dict[variable]}")
-                subcol2.metric(f"{quarters[0]} to {quarters[1]} Change:", f"{kpi_delta()}%")
+                try:
+                    subcol2.metric(f"{quarters[0]} to {quarters[1]} Change:", f"{kpi_delta()}%")
+                except ValueError as e:
+                    if str(e).startswith('cannot convert float NaN to integer'):
+                        subcol2.metric('Timeline & vintage incompatible', 'null')
                 subcol3.metric("Total Home Sales:", kpi_total_sales())
             col3.plotly_chart(line_chart(), use_container_width=True, config = {'displayModeBar': False})
 except ValueError as e:
