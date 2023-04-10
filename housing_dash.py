@@ -19,7 +19,7 @@ st.set_page_config(
     page_title='Housing Dashboard', 
     layout="wide",
     page_icon=":house:",
-    # initial_sidebar_state="collapsed"
+    initial_sidebar_state="collapsed"
     )
 
 # the custom css lives here:
@@ -94,7 +94,7 @@ quarters = st.sidebar.select_slider(
     'Q3-22',
     'Q4-22',
     ],
-    value=('Q1-20','Q3-21')
+    value=('Q2-20','Q4-22')
 )
 
 # how will the quarters be labeled in the title
@@ -157,14 +157,14 @@ var_dict1 = {
 vintage = st.sidebar.select_slider(
     'Construction vintage:',
     options=['Pre-2000',2000,2005,2010,2015,2020,'Post-2020'],
-    value=(2005,2015)
+    value=('Pre-2000','Post-2020')
 )
 
 # square footage filter
 sq_footage = st.sidebar.select_slider(
     'Home size (SF):',
     options=['<1000',1000,2500,5000,'>5000'],
-    value=(2500,5000)
+    value=('<1000','>5000')
 )
 
 # sub-geography filter
@@ -912,7 +912,6 @@ def line_chart():
         'Sales Volume':'',
         'Price Change Over Time':'$~s'
     }
-
 
 
     fig = px.line(
