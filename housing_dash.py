@@ -19,7 +19,7 @@ st.set_page_config(
     page_title='Housing Dashboard', 
     layout="wide",
     page_icon=":house:",
-    initial_sidebar_state="collapsed"
+    # initial_sidebar_state="collapsed"
     )
 
 # the custom css lives here:
@@ -62,12 +62,13 @@ custom_colors_dark = ['#ffffff','#a7b2b8','#70828c','#3c5461','#022b3a']
 
 # sidebar variables vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 variable = st.sidebar.radio(
-    'Dashboard variable:',(
-    'Sales Price', 
+    'Dashboard variable:',
+    ('Sales Price', 
     'Sales Price per SF', 
     'Sales Volume', 
     # 'Price Change Over Time'
-    ))
+    ),
+    index=1)
 
 # all the quarters available for selection
 quarters = st.sidebar.select_slider(
@@ -204,6 +205,8 @@ def load_data():
 
     # read in geospatial
     gdf = gpd.read_file('Geography/Forsyth_CTs.geojson')
+    # gdf = gpd.read_file('Geography/Forsyth_CTs_Reproj_Simp_Buff_Clip.geojson')
+    # gdf = gpd.read_file('Geography/ForsythCT_Reproj_Simp_Buff_Clip.gpkg')
 
     # join together the 2, and let not man put asunder
     joined_df = gdf.merge(df, left_on='GEOID', right_on='GEOID')
@@ -212,6 +215,7 @@ def load_data():
     }, inplace=True)
     joined_df['Sale Date'] = pd.to_datetime(joined_df['Sale Date'])
     joined_df = joined_df[['GEOID','geometry','Sale Date','year_sale','Square Ft','year_blt','price_number','price_sf','unique_ID','Sub_geo']]
+
 
     # return this
     return joined_df
@@ -352,7 +356,7 @@ def map_cumulative_2D():
         wireframe=True,
         get_fill_color='choro_color',
         get_line_color=[0, 0, 0, 255],
-        line_width_min_pixels=2,
+        line_width_min_pixels=1,
     )
     if variable == 'Sales Volume':
         tooltip = {
@@ -440,9 +444,9 @@ def map_cumulative_3D():
 
     # create map intitial state
     initial_view_state = pdk.ViewState(
-        latitude=34.192432817081316, 
-        longitude= -84.11008422291944,  
-        zoom=9.2, 
+        latitude=34.642,
+        longitude=-84.13450992035207, 
+        zoom=8, 
         max_zoom=12, 
         min_zoom=6,
         pitch=45,
@@ -464,7 +468,7 @@ def map_cumulative_3D():
         get_elevation='unique_ID * 100',
         get_fill_color='choro_color',
         get_line_color='choro_color',
-        line_width_min_pixels=2,
+        line_width_min_pixels=1,
     )
     if variable == 'Sales Volume':
         tooltip = {
@@ -984,23 +988,22 @@ def line_chart():
     else:
         fig.add_vline(x=quarters_filter_dict[quarters[1]] + pd.DateOffset(months=3), line_width=2, line_dash="dash", line_color="#FF8966")
 
-    # add a line for when Covid "began"
-    fig.add_vline(x=date(2020,3,11), line_width=1, line_dash="dot", line_color="#022B3A")
-
-    fig.add_annotation(
-        text = ("WHO Declares COVID-19 Pandemic")
-        , showarrow=False
-        , x = 0.45
-        , y = 0.01
-        , xref='paper'
-        , yref='paper' 
-        , xanchor='left'
-        , yanchor='bottom'
-        # , xshift=-1
-        # , yshift=-5
-        , font=dict(size=12, color="#022B3A")
-        , align="left"
-        ,)
+    # # add a line for when Covid "began"
+    # fig.add_vline(x=date(2020,3,11), line_width=1, line_dash="dot", line_color="#022B3A")
+    # fig.add_annotation(
+    #     text = ("WHO Declares COVID-19 Pandemic")
+    #     , showarrow=False
+    #     , x = 0.45
+    #     , y = 0.01
+    #     , xref='paper'
+    #     , yref='paper' 
+    #     , xanchor='left'
+    #     , yanchor='bottom'
+    #     # , xshift=-1
+    #     # , yshift=-5
+    #     , font=dict(size=12, color="#022B3A")
+    #     , align="left"
+    #     ,)
 
     return fig
 
