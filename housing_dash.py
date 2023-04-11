@@ -204,9 +204,8 @@ def load_data():
     df = df[['Address', 'Square Ft', 'year_blt', 'Sale Date', 'year_sale', 'price_number','price_sf','GEOID','Sub_geo','unique_ID']]
 
     # read in geospatial
-    gdf = gpd.read_file('Geography/Forsyth_CTs.geojson')
-    # gdf = gpd.read_file('Geography/Forsyth_CTs_Reproj_Simp_Buff_Clip.geojson')
-    # gdf = gpd.read_file('Geography/ForsythCT_Reproj_Simp_Buff_Clip.gpkg')
+    # gdf = gpd.read_file('Geography/Forsyth_CTs.geojson')
+    gdf = gpd.read_file('Geography/Forsyth_CTs.gpkg')
 
     # join together the 2, and let not man put asunder
     joined_df = gdf.merge(df, left_on='GEOID', right_on='GEOID')
@@ -287,7 +286,7 @@ def map_cumulative_2D():
         }
 
     df_map['price_number_formatted'] = df_map['price_number'].apply(lambda x: "${:,.0f}".format((x)))
-    df_map['price_sf_formatted'] = df_map['price_sf'].apply(lambda x: "${:.2f}".format((x)))
+    df_map['price_sf_formatted'] = df_map['price_sf'].apply(lambda x: "${:.0f}".format((x)))
     df_map['unique_ID_formatted'] = df_map['unique_ID'].apply(lambda x: "{:,.0f}".format((x)))
 
     tooltip_value = {
@@ -988,22 +987,22 @@ def line_chart():
     else:
         fig.add_vline(x=quarters_filter_dict[quarters[1]] + pd.DateOffset(months=3), line_width=2, line_dash="dash", line_color="#FF8966")
 
-    # # add a line for when Covid "began"
-    # fig.add_vline(x=date(2020,3,11), line_width=1, line_dash="dot", line_color="#022B3A")
-    # fig.add_annotation(
-    #     text = ("WHO Declares COVID-19 Pandemic")
-    #     , showarrow=False
-    #     , x = 0.45
-    #     , y = 0.01
-    #     , xref='paper'
-    #     , yref='paper' 
-    #     , xanchor='left'
-    #     , yanchor='bottom'
-    #     # , xshift=-1
-    #     # , yshift=-5
-    #     , font=dict(size=12, color="#022B3A")
-    #     , align="left"
-    #     ,)
+    # add a line for when Covid "began"
+    fig.add_vline(x=date(2020,3,11), line_width=1, line_dash="dot", line_color="#022B3A")
+    fig.add_annotation(
+        text = ("WHO Declares COVID-19 Pandemic")
+        , showarrow=False
+        , x = 0.45
+        , y = 0.01
+        , xref='paper'
+        , yref='paper' 
+        , xanchor='left'
+        , yanchor='bottom'
+        # , xshift=-1
+        # , yshift=-5
+        , font=dict(size=12, color="#022B3A")
+        , align="left"
+        ,)
 
     return fig
 
