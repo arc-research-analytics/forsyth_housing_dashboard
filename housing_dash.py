@@ -1,5 +1,4 @@
 import streamlit as st
-from datetime import datetime
 from PIL import Image
 import pandas as pd
 import geopandas as gpd
@@ -11,7 +10,6 @@ import leafmap.colormaps as cm
 from leafmap.common import hex_to_rgb
 import jenkspy
 from datetime import date
-import numpy as np
 
 # custo-myze vvvvvvvvvvvvvvvvvvvvvvvv
 im = Image.open('content/house2.jpg')
@@ -157,7 +155,7 @@ var_dict1 = {
 # vintage filter
 vintage = st.sidebar.select_slider(
     'Construction vintage:',
-    options=['Pre-2000',2000,2005,2010,2015,2020,'Post-2020'],
+    options=['Pre-2000',2010,2015,'Post-2020'],
     value=('Pre-2000','Post-2020')
 )
 
@@ -458,9 +456,9 @@ def map_cumulative_3D():
         df_map,
         pickable=True,
         autoHighlight=True,
-        highlight_color = [255, 255, 255, 80],
+        highlight_color = [255, 255, 255, 90],
         opacity=0.5,
-        stroked=True,
+        stroked=False,
         filled=True,
         wireframe=True,
         extruded=True,
@@ -488,154 +486,6 @@ def map_cumulative_3D():
             },
         map_provider='mapbox',
         map_style='light',
-        tooltip=tooltip)
-
-    return r
-
-# def map_delta():
-    joined_df = load_data()
-
-    # grab first and last quarters from the range slider
-    q1_a = quarters_filter_dict[quarters[0]]
-    q1_b = q1_a + pd.DateOffset(months=3)
-
-    q2_a = quarters_filter_dict[quarters[1]]
-    q2_b = q2_a + pd.DateOffset(months=3)
-
-    # create first dataframe using the first selected quarter
-    df1 = joined_df[(joined_df['Sale Date'] >= q1_a) & (joined_df['Sale Date'] < (q1_b))]
-    df2 = joined_df[(joined_df['Sale Date'] >= q2_a) & (joined_df['Sale Date'] < (q2_b))]
-
-    # filter by construction vintage
-    if ((vintage[0] == 'Pre-2000') & (vintage[1] == 'Pre-2000')):
-        df1 = df1[df1['year_blt'] < 2000]
-        df2 = df2[df2['year_blt'] < 2000]
-    elif ((vintage[0] == 'Post-2020') & (vintage[1] == 'Post-2020')):
-        df1 = df1[df1['year_blt'] > 2020]
-        df2 = df2[df2['year_blt'] > 2020]
-    elif ((vintage[0] == 'Pre-2000') & (vintage[1] != 'Post-2020')):
-        df1 = df1[df1['year_blt'] <= vintage[1]]
-        df2 = df2[df2['year_blt'] <= vintage[1]]
-    elif ((vintage[0] != 'Pre-2000') & (vintage[1] == 'Post-2020')):
-        df1 = df1[df1['year_blt'] >= vintage[0]]
-        df2 = df2[df2['year_blt'] >= vintage[0]]
-    elif ((vintage[0] == 'Pre-2000') & (vintage[1] == 'Post-2020')):
-        df1 = df1 #i.e., don't apply a vintage filter, just grab everything
-        df2 = df2
-    else:
-        df1 = df1[(df1['year_blt'] >= vintage[0]) & (df1['year_blt'] <= vintage[1])]
-        df2 = df2[(df2['year_blt'] >= vintage[0]) & (df2['year_blt'] <= vintage[1])]
-
-    # filter by home size (SF)
-    if ((sq_footage[0] == '<1000') & (sq_footage[1] == '<1000')):
-        df1 = df1[df1['Square Ft'] < 1000]
-        df2 = df2[df2['Square Ft'] < 1000]
-    elif ((sq_footage[0] == '>5000') & (sq_footage[1] == '>5000')):
-        df1 = df1[df1['Square Ft'] > 5000]
-        df2 = df2[df2['Square Ft'] > 5000]
-    elif ((sq_footage[0] == '<1000') & (sq_footage[1] != '>5000')):
-        df1 = df1[df1['Square Ft'] <= sq_footage[1]]
-        df2 = df2[df2['Square Ft'] <= sq_footage[1]]
-    elif ((sq_footage[0] != '<1000') & (sq_footage[1] == '>5000')):
-        df1 = df1[df1['Square Ft'] >= sq_footage[0]]
-        df2 = df2[df2['Square Ft'] >= sq_footage[0]]
-    elif ((sq_footage[0] == '<1000') & (sq_footage[1] == '>5000')):
-        df1 = df1 #i.e., don't apply a SF filter, just grab everything
-        df2 = df2
-    else:
-        df1 = df1[(df1['Square Ft'] >= sq_footage[0]) & (df1['Square Ft'] <= sq_footage[1])]
-        df2 = df2[(df2['Square Ft'] >= sq_footage[0]) & (df2['Square Ft'] <= sq_footage[1])]
-
-    # filter by sub-geography (if applicable)
-    if geography_included == 'Sub-geography':
-        df1 = df1[df1['Sub_geo'].isin(sub_geo)]
-        df2 = df2[df2['Sub_geo'].isin(sub_geo)]
-
-    # now run the groupby
-    df1_map = df1.groupby('GEOID').agg({
-        'price_number':'median', 
-        'geometry':pd.Series.mode
-        }).reset_index()
-    
-    df2_map = df2.groupby('GEOID').agg({
-        'price_number':'median', 
-        'geometry':pd.Series.mode
-        }).reset_index()
-
-    df_map_joined = df1_map.merge(df2_map, left_on='GEOID', right_on='GEOID')
-    df_map_joined = df_map_joined.rename(columns={
-        "price_number_x": "median_price_Q0", 
-        "price_number_y": "median_price_Q1",
-        "geometry_x": "geometry"
-        })
-
-    df_map_joined = df_map_joined[['GEOID', 'geometry', 'median_price_Q0', 'median_price_Q1']]
-    df_map_joined['delta'] = (df_map_joined['median_price_Q1'] - df_map_joined['median_price_Q0']) / df_map_joined['median_price_Q0']
-    df_map_joined['delta_label'] = df_map_joined['delta'].apply(lambda x: "{:.1f}%".format((x*100)))
-
-    df_map_joined = gpd.GeoDataFrame(df_map_joined)
-
-   # set choropleth color
-    colors = cm.get_palette('Blues', 5)
-    colors_rgb = [hex_to_rgb(c) for c in colors]
-    colors_rgb = list(colors_rgb)
-
-    # ignore the first value, which is essentially white
-    colors_rgb = colors_rgb[1:]
-
-    # set choropleth column 
-    try:
-        df_map_joined['choro_color'] = pd.cut(
-            df_map_joined['delta'],
-            bins=jenkspy.jenks_breaks(df_map_joined['delta'], n_classes=4),
-            labels=colors_rgb,
-            include_lowest=True,
-            duplicates='drop'
-            )
-    except:
-        df_map_joined['choro_color'] = pd.cut(
-            df_map_joined['delta'],
-            bins=jenkspy.jenks_breaks(df_map_joined['delta'], n_classes=5),
-            labels=colors_rgb,
-            include_lowest=True,
-            duplicates='drop'
-            )
-
-    # create map intitial state
-    initial_view_state = pdk.ViewState(
-        latitude=34.207054643497315,
-        longitude=-84.10535919531371, 
-        zoom=9.7, 
-        max_zoom=12, 
-        min_zoom=8,
-        pitch=0,
-        bearing=0
-    )
-
-    geojson = pdk.Layer(
-        "GeoJsonLayer",
-        df_map_joined,
-        pickable=True,
-        autoHighlight=True,
-        highlight_color = [255, 255, 255, 80],
-        opacity=0.5,
-        stroked=True,
-        filled=True,
-        wireframe=True,
-        get_fill_color='choro_color',
-        get_line_color=[0, 0, 0, 255],
-        line_width_min_pixels=2,
-    )
-
-    tooltip = {
-        "html": "Census Tract: <b>{GEOID}</b><br>Change in sales price: <b>{delta_label}</b>",
-        "style": {"background": "#022B3A", "color": "white", "font-family": "Helvetica"}
-        }
-
-    r = pdk.Deck(
-        layers=geojson,
-        initial_view_state=initial_view_state,
-        map_style="light",
         tooltip=tooltip)
 
     return r
@@ -712,7 +562,7 @@ def kpi_Q1_total():
         df1 = df1[df1['Sub_geo'].isin(sub_geo)]
 
     # calculate median sales price of the 2 quarters before running the groupby
-    df1_median_label = millify(df1['unique_ID'].count(), precision=0)
+    df1_median_label = prettify(df1['unique_ID'].count())
 
     return df1_median_label
 
@@ -766,7 +616,7 @@ def kpi_Q2_total():
         df2 = df2[df2['Sub_geo'].isin(sub_geo)]
 
     # calculate median sales price of the 2 quarters before running the groupby
-    df2_median_label = millify(df2['unique_ID'].count(), precision=0)
+    df2_median_label = prettify(df2['unique_ID'].count())
 
     return df2_median_label
 
@@ -990,19 +840,17 @@ def line_chart():
     # add a line for when Covid "began"
     fig.add_vline(x=date(2020,3,11), line_width=1, line_dash="dot", line_color="#022B3A")
     fig.add_annotation(
-        text = ("WHO Declares COVID-19 Pandemic")
-        , showarrow=False
-        , x = 0.45
-        , y = 0.01
-        , xref='paper'
-        , yref='paper' 
-        , xanchor='left'
-        , yanchor='bottom'
-        # , xshift=-1
-        # , yshift=-5
-        , font=dict(size=12, color="#022B3A")
-        , align="left"
-        ,)
+        text = ("W.H.O. Declares COVID-19 Pandemic"),
+        showarrow=False,
+        x = 0.45,
+        y = 0.01,
+        xref='paper',
+        yref='paper', 
+        xanchor='left',
+        yanchor='bottom',
+        font=dict(size=12, color="#022B3A"),
+        align="left"
+        )
 
     return fig
 
