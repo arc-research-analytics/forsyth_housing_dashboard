@@ -6,8 +6,8 @@ import pydeck as pdk
 import plotly.express as px
 from millify import millify
 from millify import prettify
-import leafmap.colormaps as cm
-from leafmap.common import hex_to_rgb
+# import leafmap.colormaps as cm
+# from leafmap.common import hex_to_rgb
 import jenkspy
 from datetime import date
 
@@ -54,8 +54,13 @@ hide_default_format = """
 
 st.markdown(hide_default_format, unsafe_allow_html=True)
 
-custom_colors_light = ['#ffffff','#ffd8ca','#ffbea8','#ffa487','#FF8966']
+# custom_colors_light = ['#ffffff','#ffd8ca','#ffbea8','#ffa487','#FF8966']
 custom_colors_dark = ['#ffffff','#a7b2b8','#70828c','#3c5461','#022b3a']
+
+# convert the above hex list to RGB values
+colors_dark_rgb = [tuple(int(h.lstrip('#')[i:i+2], 16) for i in (0, 2, 4)) for h in custom_colors_dark]
+
+
 # custo-myze ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 # sidebar variables vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
@@ -299,8 +304,8 @@ def map_cumulative_2D():
 
     # set choropleth color
     # color_brewer_colors = cm.get_palette('Blues', 5)
-    colors_rgb = [hex_to_rgb(c) for c in custom_colors_dark]
-    colors_rgb = list(colors_rgb)
+    # colors_rgb = [hex_to_rgb(c) for c in custom_colors_dark]
+    colors_rgb = list(colors_dark_rgb)
 
     # ignore the first value, which is essentially white
     colors_rgb = colors_rgb[1:]
@@ -408,9 +413,9 @@ def map_cumulative_3D():
     df_map['tooltip_value'] = tooltip_value[variable]
 
     # set choropleth color
-    colors = cm.get_palette('Blues', 5)
-    colors_rgb = [hex_to_rgb(c) for c in custom_colors_dark]
-    colors_rgb = list(colors_rgb)
+    # colors = cm.get_palette('Blues', 5)
+    # colors_rgb = [hex_to_rgb(c) for c in custom_colors_dark]
+    colors_rgb = list(colors_dark_rgb)
 
     # ignore the first value, which is essentially white
     colors_rgb = colors_rgb[1:]
@@ -460,7 +465,7 @@ def map_cumulative_3D():
         opacity=0.5,
         stroked=False,
         filled=True,
-        wireframe=True,
+        wireframe=False,
         extruded=True,
         get_elevation='unique_ID * 100',
         get_fill_color='choro_color',
