@@ -157,6 +157,11 @@ var_dict1 = {
     'Price Change Over Time':f'greater change in median sales price per SF from {quarters_title_dict[quarters[0]]} to {quarters_title_dict[quarters[1]]}.',
 }
 
+var_dict2 = {
+    'Sales Price':'price',
+    'Sales Price per SF':'price / SF'
+}
+
 # vintage filter
 vintage = st.sidebar.select_slider(
     'Construction vintage:',
@@ -899,13 +904,13 @@ try:
             col1.markdown(f"Note: Darker shades of Census tracts represent {var_dict1[variable]}. Greater sales volume represented by 'taller' census tracts.")
         with col3:
             subcol1, subcol2, subcol3 = st.columns([1, 1, 1])
-            subcol1.metric(f"Median {variable}:", f"${KPI_dict[variable]}")
+            subcol1.metric(f"Median {var_dict2[variable]}:", f"${KPI_dict[variable]}")
             try:
-                subcol2.metric(f"{quarters[0]} to {quarters[1]} Change:", f"{kpi_delta()}%")
+                subcol2.metric(f"{quarters[0]} to {quarters[1]} $\Delta$:", f"{kpi_delta()}%")
             except ValueError as e:
                 if str(e).startswith('cannot convert float NaN to integer'):
                     subcol2.metric('Timeline & vintage incompatible', 'null')
-            subcol3.metric("Total Home Sales:", kpi_total_sales())
+            subcol3.metric("Total Sales:", kpi_total_sales())
         col3.plotly_chart(line_chart(), use_container_width=True, config = {'displayModeBar': False})
 except ValueError as e:
     if str(e).startswith('Number of class have to be an integer greater than or equal to 1'):
