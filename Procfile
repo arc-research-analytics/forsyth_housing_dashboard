@@ -1,1 +1,1 @@
-web: streamlit run housing_dash.py
+web: sh setup.sh && streamlit run app.py
