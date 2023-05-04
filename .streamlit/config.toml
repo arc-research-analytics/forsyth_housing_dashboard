@@ -24,4 +24,4 @@ token = "pk.eyJ1Ijoid3dyaWdodDIxIiwiYSI6ImNsZzU3MjB2YjAwNjIzcm5zMDdtYXJkNXUifQ.F
 [server]
 headless = true
 enableCORS=false
-port = $PORT
+port = "$PORT"
