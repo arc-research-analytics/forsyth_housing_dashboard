@@ -1,1 +1,1 @@
-web: sh setup.sh && streamlit run housing_dash.py --server.port $PORT -k gunicorn.workers.sync --timeout 600
+web: sh setup.sh && streamlit run housing_dash.py --server.port $PORT

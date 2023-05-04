@@ -10,6 +10,10 @@ from millify import prettify
 # from leafmap.common import hex_to_rgb
 import jenkspy
 from datetime import date
+import os
+
+# doing something about the server port
+port = int(os.environ.get("PORT", 5000))
 
 # custo-myze vvvvvvvvvvvvvvvvvvvvvvvv
 im = Image.open('content/house2.jpg')
