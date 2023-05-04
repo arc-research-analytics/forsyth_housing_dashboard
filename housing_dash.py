@@ -12,7 +12,7 @@ import jenkspy
 from datetime import date
 import os
 
-# doing something about the server port
+# doing something about the server port - what changed?
 port = int(os.environ.get("PORT", 5000))
 
 # custo-myze vvvvvvvvvvvvvvvvvvvvvvvv
