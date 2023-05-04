@@ -21,7 +21,7 @@ font = "sans serif"
 # Default: ""
 token = "pk.eyJ1Ijoid3dyaWdodDIxIiwiYSI6ImNsZzU3MjB2YjAwNjIzcm5zMDdtYXJkNXUifQ.FxUvOC7AOzbaCbNQlYONLg"
 
-[server]
-headless = true
-enableCORS=false
-port = "$PORT"
+# [server]
+# headless = true
+# enableCORS=false
+# port = "$PORT"
